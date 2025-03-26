@@ -15,9 +15,14 @@ const movieSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
+    deleteSingleMovie: (state, action) => {
+      state.movies = state.movies.filter(
+        (movie) => movie._id !== action.payload
+      );
+    },
   },
 });
 
-export const { setMovies, setLoading } = movieSlice.actions;
+export const { setMovies, setLoading, deleteSingleMovie } = movieSlice.actions;
 
 export default movieSlice.reducer;

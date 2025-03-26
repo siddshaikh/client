@@ -26,7 +26,10 @@ function App() {
             <Route path="/wishList" element={<WishList />} />
           </>
         ) : (
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/login"
+            element={<LoginPage setIsAuthenticate={setIsAuthenticate} />}
+          />
         )}
       </Routes>
     </Router>

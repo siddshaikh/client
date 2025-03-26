@@ -11,6 +11,8 @@ import {
   addToWishlist,
   removeFromWishlist,
 } from "../store/features/wishList/wishListSlice";
+import axiosInstance from "../axiosInstance";
+import { deleteSingleMovie } from "../store/features/movies/movieSlice";
 
 const MovieCard = ({ movie }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -28,6 +30,16 @@ const MovieCard = ({ movie }) => {
       dispatch(removeFromWishlist(movie));
     } else {
       dispatch(addToWishlist(movie));
+    }
+  };
+
+  const deleteMovie = async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/deleteMovie/${id}`);
+      console.log(response.data);
+      dispatch(deleteSingleMovie(id));
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -58,7 +70,11 @@ const MovieCard = ({ movie }) => {
           >
             <AddIcon />
           </IconButton>
-          <IconButton aria-label="delete movie" sx={{ color: "white" }}>
+          <IconButton
+            aria-label="delete movie"
+            sx={{ color: "white" }}
+            onClick={() => deleteMovie(movie._id)}
+          >
             <DeleteIcon />
           </IconButton>
         </Box>

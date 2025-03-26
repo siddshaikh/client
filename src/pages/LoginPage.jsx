@@ -11,7 +11,7 @@ import { Email, Lock, Visibility, VisibilityOff } from "@mui/icons-material";
 import axiosInstance from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const LoginPage = ({ setIsAuthenticate }) => {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     email: "sidd@email.com",
@@ -37,6 +37,7 @@ const LoginPage = () => {
       const response = await axiosInstance.get("/user", { params });
       if (response.status === 200) {
         localStorage.setItem("movieUser", "thisisthetesttoken");
+        setIsAuthenticate(true);
         navigate("/");
       }
     } catch (error) {
