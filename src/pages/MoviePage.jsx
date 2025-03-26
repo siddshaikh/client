@@ -1,26 +1,45 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../axiosInstance";
 import { Box, CircularProgress, Grid, Pagination } from "@mui/material";
 import MovieCard from "../components/MovieCard";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import axiosInstance from "../axiosInstance";
+import { setLoading, setMovies } from "../store/features/movies/movieSlice";
 
 const MoviePage = () => {
-  const [loading, setLoading] = useState(true);
-  const [movieData, setMovieData] = useState([]);
+  const dispatch = useDispatch();
+  const movies = useSelector((state) => state.movies.movies);
+  const loading = useSelector((state) => state.movies.loading);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
+
+  const params = {
+    name: "",
+    limit,
+    page: currentPage,
+  };
+
   useEffect(() => {
     const fetchAllMovies = async () => {
       try {
-        setLoading(true);
-        const response = await axiosInstance.get("/allMovies");
-        setMovieData(response.data);
-        console.log(response);
+        dispatch(setLoading(true));
+        const response = await axiosInstance.get("/moviesByName", { params });
+        dispatch(setMovies(response.data.movies));
+        setTotalPages(Math.ceil(response.data.totalMovies / limit));
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        dispatch(setLoading(false));
       }
     };
     fetchAllMovies();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   return (
     <Box
@@ -34,14 +53,16 @@ const MoviePage = () => {
     >
       <Grid container spacing={2} justifyContent="center">
         <Grid item>{loading && <CircularProgress />}</Grid>
-        {movieData.map((movie) => (
+        {movies.map((movie) => (
           <Grid item key={movie._id}>
             <MovieCard movie={movie} />
           </Grid>
         ))}
       </Grid>
       <Pagination
-        count={10}
+        count={totalPages}
+        page={currentPage}
+        onChange={handlePageChange}
         variant="outlined"
         shape="rounded"
         sx={{ my: 2 }}

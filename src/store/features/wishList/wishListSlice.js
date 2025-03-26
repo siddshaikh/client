@@ -10,14 +10,16 @@ const wishlistSlice = createSlice({
   reducers: {
     addToWishlist: (state, action) => {
       const movieExists = state.items.some(
-        (item) => item.id === action.payload.id
+        (item) => item._id === action.payload._id
       );
       if (!movieExists) {
         state.items.push(action.payload);
       }
     },
     removeFromWishlist: (state, action) => {
-      state.items = state.items.filter((item) => item.id !== action.payload.id);
+      state.items = state.items.filter(
+        (item) => item._id !== action.payload._id
+      );
     },
   },
 });

@@ -3,15 +3,33 @@ import { Card, CardContent, IconButton, Typography, Box } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import { styled } from "@mui/system";
 import EditModal from "./EditModal";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../store/features/wishList/wishListSlice";
 
 const MovieCard = ({ movie }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isEditClicked, setIsEditClicked] = useState(false);
+  const dispatch = useDispatch();
+  const wishlistItems = useSelector((state) => state.wishlist.items);
+
+  const isInWishlist = wishlistItems.some((item) => item._id === movie._id);
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
+
+  const handleWishlistToggle = () => {
+    if (isInWishlist) {
+      dispatch(removeFromWishlist(movie));
+    } else {
+      dispatch(addToWishlist(movie));
+    }
+  };
 
   return (
     <StyledCard onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -26,8 +44,12 @@ const MovieCard = ({ movie }) => {
           <Typography>Duration: {movie.duration} mins</Typography>
         </CardContent>
         <Box className="icons">
-          <IconButton aria-label="add to wishlist" sx={{ color: "white" }}>
-            <FavoriteIcon />
+          <IconButton
+            aria-label="add to wishlist"
+            sx={{ color: "white" }}
+            onClick={handleWishlistToggle}
+          >
+            {isInWishlist ? <RemoveIcon /> : <FavoriteIcon />}
           </IconButton>
           <IconButton
             aria-label="add movie"

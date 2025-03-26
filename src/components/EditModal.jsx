@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Box, TextField, Button, Typography } from "@mui/material";
+import axiosInstance from "../axiosInstance";
 
 const EditModal = ({ open, handleClose, movie, mode }) => {
   const [editedMovie, setEditedMovie] = useState({
@@ -18,9 +19,43 @@ const EditModal = ({ open, handleClose, movie, mode }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    handleClose();
+    try {
+      const requestData = {
+        name: editedMovie.name,
+        rating: editedMovie.rating,
+        release_date: editedMovie.release_date,
+        duration: editedMovie.duration,
+        url: editedMovie.url,
+      };
+      const response = await axiosInstance.put(
+        `/updateMovie/${movie._id}`,
+        requestData
+      );
+      console.log(response.data.status);
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAdd = async (e) => {
+    e.preventDefault();
+    try {
+      const requestData = {
+        name: editedMovie.name,
+        rating: editedMovie.rating,
+        release_date: editedMovie.release_date,
+        duration: editedMovie.duration,
+        url: editedMovie.url,
+      };
+      const response = await axiosInstance.post("/insertMovie", requestData);
+      console.log(response.data);
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -46,7 +81,7 @@ const EditModal = ({ open, handleClose, movie, mode }) => {
         <Typography id="edit-movie-modal" variant="h6" component="h2">
           {mode === "edit" ? "Edit" : "Add"} Movie
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={mode === "edit" ? handleUpdate : handleAdd}>
           <TextField
             fullWidth
             label="Name"
@@ -65,8 +100,10 @@ const EditModal = ({ open, handleClose, movie, mode }) => {
           />
           <TextField
             fullWidth
+            type="date"
             label="Release Date"
             name="release_date"
+            InputLabelProps={{ shrink: true }}
             value={editedMovie.release_date}
             onChange={handleChange}
             margin="normal"
@@ -84,6 +121,7 @@ const EditModal = ({ open, handleClose, movie, mode }) => {
             label="URL"
             name="url"
             value={editedMovie.url}
+            onChange={handleChange}
             InputProps={{
               readOnly: !mode === "edit",
             }}
