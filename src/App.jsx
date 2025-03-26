@@ -16,6 +16,12 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isAuthenticate) {
+      window.location.href = "/login";
+    }
+  }, [isAuthenticate]);
+
   return (
     <Router>
       {isAuthenticate && <NavBar />}
