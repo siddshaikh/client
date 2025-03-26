@@ -15,7 +15,7 @@ import ShopIcon from "@mui/icons-material/Shop";
 import { Add } from "@mui/icons-material";
 import EditModal from "./EditModal";
 import axiosInstance from "../axiosInstance";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setMovies } from "../store/features/movies/movieSlice";
 
 const NavBar = () => {
@@ -23,6 +23,7 @@ const NavBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const wishlistItems = useSelector((state) => state.wishlist.items);
   const limit = 10;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ const NavBar = () => {
           onChange={handleSearchChange}
         />
         <Link to={"/wishList"}>
-          <Badge badgeContent={4} color="primary">
+          <Badge badgeContent={wishlistItems.length} color="primary">
             <IconButton size="small" color="primary">
               <ShopIcon />
             </IconButton>
